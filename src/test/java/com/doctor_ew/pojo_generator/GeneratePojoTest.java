@@ -1,9 +1,9 @@
 package com.doctor_ew.pojo_generator;
 
-import static org.junit.Assert.assertTrue;
-
-import com.doctor_ew.pojo_generator.model.TestPerson;
+import com.doctor_ew.pojo_generator.model.Person;
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Unit test for simple App.
@@ -17,9 +17,23 @@ public class GeneratePojoTest
     private GeneratePojo generatePojo = new GeneratePojo();
 
     @Test
-    public void testGenerateNewInstance() {
-        TestPerson person = new TestPerson();
-        person = (TestPerson)generatePojo.generateNewInstance(person);
-        System.out.println(person);
+    public void testDoesAnythingActuallyHappen() {
+        Person person = new Person();
+        person = (Person)generatePojo.generateNewInstance(person);
+        assertTrue(person.getFirstName() != null);
+    }
+
+    @Test
+    public void testNestedObjects() {
+        Person person = new Person();
+        person = (Person) generatePojo.generateNewInstance(person);
+        assertTrue(person.getAddress() != null);
+    }
+
+    @Test
+    public void testList() {
+        Person person = new Person();
+        person = (Person) generatePojo.generateNewInstance(person);
+        assertTrue(person.getPreviousAddresses().size() > 0);
     }
 }

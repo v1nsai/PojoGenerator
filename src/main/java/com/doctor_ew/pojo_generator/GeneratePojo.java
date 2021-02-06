@@ -1,18 +1,16 @@
 package com.doctor_ew.pojo_generator;
 
+import com.doctor_ew.pojo_generator.Enumerations.ResultEnum;
+import org.apache.commons.lang3.ClassUtils;
+
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.doctor_ew.pojo_generator.Enumerations.ResultEnum;
-import org.apache.commons.lang3.ClassUtils;
 
 /**
  * Hello world!
@@ -26,9 +24,11 @@ public class GeneratePojo {
         Field[] fields = obj.getClass().getDeclaredFields();
         for (Field field : fields) {
             field.setAccessible(true);
-//            if (field.getType().isAssignableFrom(Collection.class)) {
-//                for(int i = 0; i < rand.nextInt(10); i ++) {
-//
+//            if (Collection.class.isAssignableFrom(field.getType())) {
+//                try {
+//                    field.set(obj, newCollection(field));
+//                } catch (IllegalAccessException e) {
+//                    e.printStackTrace();
 //                }
 //            }
             if (ClassUtils.isPrimitiveOrWrapper(field.getType()) || field.getType() == String.class) {
@@ -39,7 +39,15 @@ public class GeneratePojo {
                 }
             }
             else {
-                obj = generateNewInstance(obj);
+                try {
+                    Object nestedObject = new Object();
+                    nestedObject = generateNewInstance(field.getType().newInstance());
+                    field.set(obj, nestedObject);
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return obj;
@@ -91,7 +99,7 @@ public class GeneratePojo {
                 for(int i = 1; i < numberOfWords; i ++) {
                     randomWords.append(words.get(rand.nextInt(words.size()))).append(" ");
                 }
-                randomWords.delete(randomWords.length() - 1, randomWords.length() - 1);
+                randomWords.trimToSize();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -99,4 +107,16 @@ public class GeneratePojo {
         }
         return ResultEnum.FAILED;
     }
+
+//    public Object newCollection(Field field) {
+//        Object collection = null;
+//        try {
+//            collection = field.getType().newInstance();
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
+//        return collection;
+//    }
 }
