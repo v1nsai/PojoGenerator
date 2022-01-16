@@ -7,15 +7,12 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * Hello world!
- *
- */
 public class GeneratePojo {
 
     private Random rand = new Random();
@@ -24,6 +21,7 @@ public class GeneratePojo {
         Field[] fields = obj.getClass().getDeclaredFields();
         for (Field field : fields) {
             field.setAccessible(true);
+            // TODO automated way to handle Collections in spite of type erasure possible?
 //            if (Collection.class.isAssignableFrom(field.getType())) {
 //                try {
 //                    field.set(obj, newCollection(field));
@@ -31,6 +29,9 @@ public class GeneratePojo {
 //                    e.printStackTrace();
 //                }
 //            }
+            if (Collection.class.isAssignableFrom(field.getType())) {
+                continue;
+            }
             if (ClassUtils.isPrimitiveOrWrapper(field.getType()) || field.getType() == String.class) {
                 try {
                     field.set(obj, putFakeValueInPrimitiveField(field));
@@ -117,6 +118,7 @@ public class GeneratePojo {
 //        } catch (IllegalAccessException e) {
 //            e.printStackTrace();
 //        }
+//        Object type = field.getType();
 //        return collection;
 //    }
 }
