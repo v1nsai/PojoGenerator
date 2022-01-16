@@ -22,13 +22,6 @@ public class GeneratePojo {
         for (Field field : fields) {
             field.setAccessible(true);
             // TODO automated way to handle Collections in spite of type erasure possible?
-//            if (Collection.class.isAssignableFrom(field.getType())) {
-//                try {
-//                    field.set(obj, newCollection(field));
-//                } catch (IllegalAccessException e) {
-//                    e.printStackTrace();
-//                }
-//            }
             if (Collection.class.isAssignableFrom(field.getType())) {
                 continue;
             }
@@ -108,17 +101,4 @@ public class GeneratePojo {
         }
         return ResultEnum.FAILED;
     }
-
-//    public Object newCollection(Field field) {
-//        Object collection = null;
-//        try {
-//            collection = field.getType().newInstance();
-//        } catch (InstantiationException e) {
-//            e.printStackTrace();
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        }
-//        Object type = field.getType();
-//        return collection;
-//    }
 }
